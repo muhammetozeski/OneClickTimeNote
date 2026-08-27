@@ -6,7 +6,9 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioAttributes;
 import android.net.Uri;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -104,12 +106,28 @@ public class TimestampWidget extends AppWidgetProvider {
 
             p.edit().putLong(kt, now).commit();
             toast(c, p.getString("n" + id, "") + " " + line);
-            // Toasts are suppressed on some launchers; the buzz is the reliable half.
-            ((Vibrator) c.getSystemService(Context.VIBRATOR_SERVICE)).vibrate(40L);
+            buzz(c);
         } catch (Throwable t) {
             Log.w(TAG, t);   // nothing was written, so the tap stays retryable
             toast(c, "Yazılamadı");
         }
+    }
+
+    /*
+     * A plain vibrate(long) is sent as VibrationAttributes USAGE_TOUCH, and the
+     * platform drops that from a background process:
+     *   VibratorManagerService: Ignoring incoming vibration as process with
+     *   uid=... is background, attrs=VibrationAttributes{mUsage=TOUCH}
+     * A widget tap always runs in the background, so the usage has to be
+     * NOTIFICATION, which is allowed from there.
+     */
+    private static void buzz(Context c) {
+        ((Vibrator) c.getSystemService(Context.VIBRATOR_SERVICE)).vibrate(
+                VibrationEffect.createOneShot(40L, VibrationEffect.DEFAULT_AMPLITUDE),
+                new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build());
     }
 
     /* Keeps Settings > Storage > Cache at zero: nothing here is ever reused. */
