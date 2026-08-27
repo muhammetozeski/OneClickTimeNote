@@ -56,8 +56,8 @@ $PUB  = Join-Path $ROOT 'Publish'
 # ----------------------------------------------------------------------
 #  AYARLAR  (kendi projene gore degistir)
 # ----------------------------------------------------------------------
-$APK_ADI      = 'TimestampLoggerWidget.apk'   # cikti APK dosya adi
-$ROOT_PROJECT = 'TimestampLoggerWidget'       # Proje\settings.gradle icindeki rootProject.name ile AYNI olmali
+$APK_ADI      = 'OneClickTimeNote.apk'   # cikti APK dosya adi
+$ROOT_PROJECT = 'OneClickTimeNote'       # Proje\settings.gradle icindeki rootProject.name ile AYNI olmali
 # ----------------------------------------------------------------------
 
 if (-not (Test-Path $API))  { throw "API klasoru yok: $API" }
