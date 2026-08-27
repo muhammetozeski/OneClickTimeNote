@@ -20,11 +20,13 @@
         android:hardwareAccelerated="false"
         android:vmSafeMode="true"
         android:label="One Click Time Note"
+        android:icon="@drawable/icon"
         android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
 
         <receiver
             android:name=".TimestampWidget"
             android:label="One Click Time Note"
+            android:icon="@drawable/icon"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
