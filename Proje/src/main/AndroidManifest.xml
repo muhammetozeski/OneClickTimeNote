@@ -1,5 +1,8 @@
-<!-- The package/namespace comes from build.gradle (namespace 'com.timestamp.widget'). -->
+<!-- The package/namespace comes from build.gradle (namespace 'com.oneclick.timenote'). -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- The tap buzz. Toasts are suppressed on some launchers, this is not. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <!--
       Small INSTALLED size (see SmallestApk/RAPOR.md):
@@ -16,12 +19,12 @@
         android:allowBackup="false"
         android:hardwareAccelerated="false"
         android:vmSafeMode="true"
-        android:label="Zaman Damgası"
+        android:label="One Click Time Note"
         android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
 
         <receiver
             android:name=".TimestampWidget"
-            android:label="Zaman Damgası"
+            android:label="One Click Time Note"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

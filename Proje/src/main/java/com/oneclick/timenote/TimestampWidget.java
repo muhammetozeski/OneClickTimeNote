@@ -1,4 +1,4 @@
-package com.timestamp.widget;
+package com.oneclick.timenote;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Vibrator;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -26,10 +27,6 @@ import java.util.Locale;
  *
  * Prefs "w", three short keys per widget id:
  *   u<id> document uri   n<id> label on the widget   t<id> last accepted tap
- *
- * Everything here is kept deliberately terse: message strings, toasts and
- * string resources all end up in classes.dex / resources.arsc, and this APK is
- * meant to stay in the ~5 KB range.
  */
 public class TimestampWidget extends AppWidgetProvider {
 
@@ -82,6 +79,9 @@ public class TimestampWidget extends AppWidgetProvider {
     /*
      * One try block, one exit path. javac copies a finally body into every exit
      * of its try, so returns inside a try/finally are paid for in dex bytes.
+     *
+     * Nothing reports success before close() has returned: up to that point the
+     * bytes may still be sitting in a buffer, and a toast then would be a lie.
      */
     private static void stamp(Context c, int id) {
         try {
@@ -100,18 +100,16 @@ public class TimestampWidget extends AppWidgetProvider {
                     .format(new Date(now));
             OutputStream o = c.getContentResolver().openOutputStream(Uri.parse(u), "wa");
             o.write((line + "\r\n").getBytes());
-            o.close();
-            // commit, not apply: the process is expected to die right after this
+            o.close();   // the write is only durable once this returns
+
             p.edit().putLong(kt, now).commit();
-            toast(c, line);
+            toast(c, p.getString("n" + id, "") + " " + line);
+            // Toasts are suppressed on some launchers; the buzz is the reliable half.
+            ((Vibrator) c.getSystemService(Context.VIBRATOR_SERVICE)).vibrate(40L);
         } catch (Throwable t) {
             Log.w(TAG, t);   // nothing was written, so the tap stays retryable
             toast(c, "Yazılamadı");
         }
-    }
-
-    static void toast(Context c, String s) {
-        Toast.makeText(c, s, Toast.LENGTH_SHORT).show();
     }
 
     /* Keeps Settings > Storage > Cache at zero: nothing here is ever reused. */
@@ -131,5 +129,9 @@ public class TimestampWidget extends AppWidgetProvider {
             for (File k : kids) del(k);
         }
         f.delete();
+    }
+
+    static void toast(Context c, String s) {
+        Toast.makeText(c, s, Toast.LENGTH_SHORT).show();
     }
 }

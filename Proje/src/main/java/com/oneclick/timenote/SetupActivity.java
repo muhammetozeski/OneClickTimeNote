@@ -1,4 +1,4 @@
-package com.timestamp.widget;
+package com.oneclick.timenote;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
@@ -70,7 +70,7 @@ public class SetupActivity extends Activity {
         finish();
     }
 
-    /** What the user typed in the dialog: display name without a trailing ".txt". */
+    /** The document's own name, extension included. */
     private String name(Uri u) {
         String n = null;
         Cursor c = getContentResolver().query(u, null, null, null, null);
@@ -84,8 +84,7 @@ public class SetupActivity extends Activity {
         if (n == null) n = u.getLastPathSegment();      // e.g. "primary:Notes/log.txt"
         if (n == null) return "";
         int slash = n.lastIndexOf('/');
-        if (slash >= 0) n = n.substring(slash + 1);
-        return n.endsWith(".txt") ? n.substring(0, n.length() - 4) : n;
+        return slash >= 0 ? n.substring(slash + 1) : n;
     }
 
     @Override

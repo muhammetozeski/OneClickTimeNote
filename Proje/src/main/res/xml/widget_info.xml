@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- updatePeriodMillis="0": the system never wakes this app up on its own. -->
+<!-- updatePeriodMillis="0": the system never wakes this app up on its own.
+     40dp is one launcher cell, and minResize* repeats it so the widget can be
+     dragged down to that size instead of being pinned to its default. -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:minWidth="72dp"
-    android:minHeight="72dp"
+    android:minWidth="40dp"
+    android:minHeight="40dp"
+    android:minResizeWidth="40dp"
+    android:minResizeHeight="40dp"
     android:updatePeriodMillis="0"
     android:initialLayout="@layout/widget"
-    android:configure="com.timestamp.widget.SetupActivity"
+    android:configure="com.oneclick.timenote.SetupActivity"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen" />

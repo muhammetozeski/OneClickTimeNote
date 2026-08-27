@@ -20,7 +20,7 @@ allprojects {
 android {
     compileSdkVersion 33
     defaultConfig {
-        applicationId "com.timestamp.widget"
+        applicationId "com.oneclick.timenote"
         // 23 lets PendingIntent.FLAG_IMMUTABLE and getCodeCacheDir() be called
         // unconditionally, which drops both Build.VERSION.SDK_INT guards from the dex.
         minSdkVersion 23
@@ -42,7 +42,7 @@ android {
     compileOptions {
         encoding = 'UTF-8'
     }
-    namespace 'com.timestamp.widget'
+    namespace 'com.oneclick.timenote'
 }
 
 dependencies {
