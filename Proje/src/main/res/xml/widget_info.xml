@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- updatePeriodMillis="0": the system never wakes this app up on its own. -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="72dp"
+    android:minHeight="72dp"
+    android:updatePeriodMillis="0"
+    android:initialLayout="@layout/widget"
+    android:configure="com.timestamp.widget.SetupActivity"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen" />

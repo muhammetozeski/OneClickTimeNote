@@ -1,0 +1,46 @@
+<!-- The package/namespace comes from build.gradle (namespace 'com.timestamp.widget'). -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+      Small INSTALLED size (see SmallestApk/RAPOR.md):
+      - debuggable="true"           -> no dex2oat, no odex/vdex/art (run-from-apk)
+      - vmSafeMode="true"           -> AOT optimisation off
+      - hardwareAccelerated="false" -> no GPU shader cache files
+      - allowBackup="false"         -> no backup data folder
+
+      There is no MAIN/LAUNCHER activity on purpose: the app never shows up in
+      the app drawer, it only exists as a home screen widget.
+    -->
+    <application
+        android:debuggable="true"
+        android:allowBackup="false"
+        android:hardwareAccelerated="false"
+        android:vmSafeMode="true"
+        android:label="@string/app_name"
+        android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
+
+        <receiver
+            android:name=".TimestampWidget"
+            android:label="@string/app_name"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
+
+        <!-- Taps are delivered as an explicit broadcast, so no filter is needed for them. -->
+
+        <activity
+            android:name=".SetupActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

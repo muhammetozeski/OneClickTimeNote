@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Zaman Damgası</string>
+    <string name="default_file">zaman-damgasi.txt</string>
+    <string name="no_file">Dosya yok</string>
+    <string name="write_failed">Dosyaya yazılamadı</string>
+    <string name="no_picker">Dosya penceresi açılamadı</string>
+    <string name="setup_failed">Widget kurulamadı</string>
+</resources>
