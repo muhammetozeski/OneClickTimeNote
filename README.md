@@ -13,11 +13,13 @@ whole application.
 
 ## Behaviour
 
-- Dropping the widget opens the system *create document* dialog. You name a `.txt` file and
-  pick a folder.
-- The widget then shows that name, white on a semi transparent black plate.
+- Dropping the widget opens the system *create document* dialog. You name a file and pick a
+  folder; a name typed without an extension gets `.txt`, and any other extension you type is
+  kept.
+- The widget then shows that name, white on a semi transparent black plate. A `.txt` extension
+  is never displayed.
 - Tapping it appends one line, buzzes for 40 ms and shows a toast of what was written:
-  `a.txt 2026.08.27 20.15.19`
+  `notes 2026.08.27 20.15.19`
 - A tap within 4 seconds of an accepted one is ignored. Each widget keeps its own file and its
   own window, so you can place several.
 - Nothing reports success before `close()` has returned on the output stream, so a buzz always
