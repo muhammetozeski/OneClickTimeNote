@@ -1,10 +1,10 @@
 # Timestamp Logger Widget
 
 ![Platform](https://img.shields.io/badge/platform-Android-3DDC84)
-![Min SDK](https://img.shields.io/badge/minSdk-19-blue)
+![Min SDK](https://img.shields.io/badge/minSdk-23-blue)
 ![Target SDK](https://img.shields.io/badge/targetSdk-29-blue)
 ![Language](https://img.shields.io/badge/language-Java-orange)
-![APK](https://img.shields.io/badge/APK-10.7%20KB-lightgrey)
+![APK](https://img.shields.io/badge/APK-8.5%20KB-lightgrey)
 
 An Android home screen widget that appends the current date and time to a text file.
 Tap the widget, one line is written. That is all it does.
@@ -20,10 +20,11 @@ the entire application.
 |---|---|
 | Drop the widget on the home screen | The system *create document* dialog (Storage Access Framework) opens. You type a name and pick a folder; the `.txt` file is created there. |
 | Name entered | The widget shows that name, white text on a semi transparent black plate. |
-| Tap the widget | One line is appended to the file: `2026.08.27 18.03.18` |
-| Tap again within 4 seconds | Ignored. Nothing is written. |
+| Tap the widget | One line is appended to the file and a toast shows the line that was written: `2026.08.27 18.03.18` |
+| Tap again within 4 seconds | Ignored. Nothing is written and no toast is shown. |
+| The write fails | A toast says so and the tap stays retryable — the debounce is only armed after a successful write. |
 | Cancel the dialog | The widget is not placed at all. |
-| Remove the widget | Its stored file reference, label and debounce entry are deleted, and the persisted URI permission is released unless another widget still points at the same file. |
+| Remove the widget | Its stored file reference, label and debounce entry are deleted. |
 
 Place the widget more than once to log into more than one file. Each instance keeps its own
 file and its own 4 second window; they never block each other.
@@ -59,6 +60,11 @@ cleanly in Windows editors as well.
 | `res/layout/widget.xml` | A single `TextView`: `#B3000000` background, centred white label. |
 | `res/xml/widget_info.xml` | Widget metadata: 72×72 dp minimum, resizable, `updatePeriodMillis="0"`, points at `SetupActivity` as the configuration activity. |
 
+There is no `res/values/strings.xml`. The two labels live as literals in the manifest and the
+four toast texts as literals in the sources, which keeps them out of `resources.arsc`. Because
+those literals are Turkish, `build.gradle` pins `compileOptions.encoding` to UTF-8 so javac
+does not fall back to the Windows default charset.
+
 ### Stored state
 
 One `SharedPreferences` file (`w`), three short keys per widget id:
@@ -76,9 +82,9 @@ immediately instead of being silently swallowed for four seconds.
 
 ### Writing
 
-`ContentResolver.openOutputStream(uri, "wa")` — append mode, no read of the existing content.
-If a document provider refuses `"wa"`, the code falls back to read‑modify‑write through
-`"wt"`. Both paths log their failure, and the widget shows a toast only when both fail.
+`ContentResolver.openOutputStream(uri, "wa")` — append mode, so the existing content is never
+read back into memory no matter how long the file gets. Any failure is logged under the `TsW`
+tag and surfaced as a toast.
 
 ### Tap delivery
 
@@ -90,11 +96,30 @@ pending intent. `FLAG_IMMUTABLE` is added on API 23 and above.
 
 ## Size
 
-| | |
+Signed APK: **8,550 bytes**, no dependencies, three classes in `classes.dex` (the two
+components plus one R8 generated helper). Where those bytes go:
+
+| Entry | Bytes (deflated) |
 |---|---|
-| Signed APK | 10,678 bytes |
-| Classes in `classes.dex` | 3 (2 components + one R8 generated helper) |
-| Dependencies | none |
+| `classes.dex` | 3,648 |
+| `AndroidManifest.xml` | 988 |
+| `resources.arsc` | 884 (stored, not deflated) |
+| `META-INF` signature | 1,259 |
+| `res/layout` + `res/xml` | 672 |
+
+And inside the 7,000 byte uncompressed dex, read from its `map_list`:
+
+| Section | Bytes |
+|---|---|
+| String data + string ids | 2,806 |
+| Bytecode | 1,783 |
+| Method / proto / type reference tables | 1,870 |
+| R8 build marker | 143 |
+
+Only 67 bytes of the string data are this app's own texts. The rest is the price of the API
+surface: every distinct framework method the code calls writes its class descriptor, its name
+and its signature into the dex. This app makes 86 such calls where an empty activity makes 12,
+so the reference tables and their names, not the logic, are what set the floor here.
 
 The manifest sets `android:debuggable="true"`, `vmSafeMode="true"`,
 `hardwareAccelerated="false"` and `allowBackup="false"`. `debuggable` is the one that matters
@@ -125,7 +150,7 @@ The signed APK is written to `Publish\TimestampLoggerWidget.apk`.
 
 | Command | targetSdk | Signature |
 |---|---|---|
-| `pwsh -File .\Derle.ps1` | 29 | v1 only (10,678 bytes, measured) |
+| `pwsh -File .\Derle.ps1` | 29 | v1 only (8,550 bytes, measured) |
 | `pwsh -File .\Derle.ps1 -TargetSdk 33` | 33 | v1+v2+v3 |
 | `pwsh -File .\Derle.ps1 -V2` | 29 | v1+v2+v3 |
 
@@ -153,7 +178,7 @@ TimestampLoggerWidget\
 ├─ Derle.ps1                  build + zipalign + sign, output goes to Publish\
 ├─ Publish\                   signed APK (not versioned)
 └─ Proje\
-   ├─ build.gradle            applicationId, minSdk 19, R8 + resource shrinking
+   ├─ build.gradle            applicationId, minSdk 23, R8 + resource shrinking
    ├─ settings.gradle
    └─ src\main\
       ├─ AndroidManifest.xml
@@ -162,6 +187,5 @@ TimestampLoggerWidget\
       │  └─ SetupActivity.java
       └─ res\
          ├─ layout\widget.xml
-         ├─ xml\widget_info.xml
-         └─ values\strings.xml
+         └─ xml\widget_info.xml
 ```
