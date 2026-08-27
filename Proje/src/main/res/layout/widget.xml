@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Semi transparent black plate, file name on top. Single TextView keeps the
-     RemoteViews tree (and the APK) as small as possible. -->
+<!-- Semi transparent black plate, file name on top. No padding and no margin:
+     the text sits centred in whatever size the widget is dragged to, so it can
+     be shrunk as far as the launcher allows. -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/label"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#B3000000"
     android:gravity="center"
-    android:padding="6dp"
-    android:maxLines="3"
-    android:ellipsize="end"
     android:textColor="#FFFFFFFF"
     android:textSize="14sp" />
