@@ -44,9 +44,17 @@ public class TimestampWidget extends AppWidgetProvider {
         return c.getSharedPreferences("w", Context.MODE_PRIVATE);
     }
 
+    /*
+     * ".txt" is stored but never shown. Stripping it here rather than before
+     * storing means widgets placed by an older build lose it too.
+     */
+    private static String shown(String name) {
+        return name.endsWith(".txt") ? name.substring(0, name.length() - 4) : name;
+    }
+
     static void render(Context c, int id) {
         RemoteViews rv = new RemoteViews(c.getPackageName(), R.layout.widget);
-        rv.setTextViewText(R.id.label, prefs(c).getString("n" + id, ""));
+        rv.setTextViewText(R.id.label, shown(prefs(c).getString("n" + id, "")));
         Intent i = new Intent(c, TimestampWidget.class)
                 .setAction(TICK)
                 .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id);
@@ -95,7 +103,7 @@ public class TimestampWidget extends AppWidgetProvider {
             if (since >= 0 && since < BLOCK_MS) return;
             String u = p.getString("u" + id, null);
             if (u == null) {
-                toast(c, "Dosya yok");
+                toast(c, "No file");
                 return;
             }
             String line = new SimpleDateFormat("yyyy.MM.dd HH.mm.ss", Locale.US)
@@ -105,11 +113,11 @@ public class TimestampWidget extends AppWidgetProvider {
             o.close();   // the write is only durable once this returns
 
             p.edit().putLong(kt, now).commit();
-            toast(c, p.getString("n" + id, "") + " " + line);
+            toast(c, shown(p.getString("n" + id, "")) + " " + line);
             buzz(c);
         } catch (Throwable t) {
             Log.w(TAG, t);   // nothing was written, so the tap stays retryable
-            toast(c, "Yazılamadı");
+            toast(c, "Write failed");
         }
     }
 

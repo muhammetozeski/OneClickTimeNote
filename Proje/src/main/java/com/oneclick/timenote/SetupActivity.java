@@ -35,13 +35,15 @@ public class SetupActivity extends Activity {
             startActivityForResult(new Intent(Intent.ACTION_CREATE_DOCUMENT)
                     .addCategory(Intent.CATEGORY_OPENABLE)
                     .setType("text/plain")
-                    .putExtra(Intent.EXTRA_TITLE, "zaman-damgasi.txt")
+                    // "text/plain" is what makes the picker append ".txt" when the
+                    // typed name has no extension, while still accepting one that has.
+                    .putExtra(Intent.EXTRA_TITLE, "time-note.txt")
                     .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
                             | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                             | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION), 1);
         } catch (Throwable t) {
             Log.w(TimestampWidget.TAG, t);
-            TimestampWidget.toast(this, "Dosya penceresi açılamadı");
+            TimestampWidget.toast(this, "No file picker");
             finish();
         }
     }
@@ -64,7 +66,7 @@ public class SetupActivity extends Activity {
                         .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id));
             } catch (Throwable t) {
                 Log.w(TimestampWidget.TAG, t);   // stays CANCELED, the widget is not placed
-                TimestampWidget.toast(this, "Widget kurulamadı");
+                TimestampWidget.toast(this, "Setup failed");
             }
         }
         finish();

@@ -37,8 +37,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
         }
     }
-    // Toast texts in the sources are Turkish; javac must not fall back to the
-    // Windows default charset or the diacritics get mangled.
+    // Pinned so javac never falls back to the Windows default charset.
     compileOptions {
         encoding = 'UTF-8'
     }
