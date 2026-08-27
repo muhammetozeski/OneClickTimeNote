@@ -93,6 +93,6 @@ the label, and the timestamp of the last accepted tap.
 
 ## Authors
 
-- **[muhammetozeski](https://github.com/muhammetozeski)** — owner, requirements and direction
+- **[muhammetozeski](https://github.com/muhammetozeski)** — owner, requirements and direction 😊
 - **Claude (Opus 5, via [Claude Code](https://claude.com/claude-code))** — implementation,
   APK size analysis, on-device debugging
