@@ -21,8 +21,9 @@ android {
     compileSdkVersion 33
     defaultConfig {
         applicationId "com.timestamp.widget"
-        // 19 = Storage Access Framework (ACTION_CREATE_DOCUMENT + persistable permissions)
-        minSdkVersion 19
+        // 23 lets PendingIntent.FLAG_IMMUTABLE and getCodeCacheDir() be called
+        // unconditionally, which drops both Build.VERSION.SDK_INT guards from the dex.
+        minSdkVersion 23
         // Comes from Derle.ps1 (-PtargetSdk), 29 otherwise: an APK with targetSdk 30+
         // needs a v2 signature to install on Android 11+, which costs ~8 KB.
         targetSdkVersion (project.hasProperty('targetSdk') ? project.targetSdk.toInteger() : 29)
@@ -35,6 +36,11 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
         }
+    }
+    // Toast texts in the sources are Turkish; javac must not fall back to the
+    // Windows default charset or the diacritics get mangled.
+    compileOptions {
+        encoding = 'UTF-8'
     }
     namespace 'com.timestamp.widget'
 }
