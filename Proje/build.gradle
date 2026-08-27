@@ -1,0 +1,44 @@
+apply plugin: 'com.android.application'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.0.2'
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        google()
+    }
+}
+
+android {
+    compileSdkVersion 33
+    defaultConfig {
+        applicationId "com.timestamp.widget"
+        // 19 = Storage Access Framework (ACTION_CREATE_DOCUMENT + persistable permissions)
+        minSdkVersion 19
+        // Comes from Derle.ps1 (-PtargetSdk), 29 otherwise: an APK with targetSdk 30+
+        // needs a v2 signature to install on Android 11+, which costs ~8 KB.
+        targetSdkVersion (project.hasProperty('targetSdk') ? project.targetSdk.toInteger() : 29)
+        versionCode 1
+        versionName "1.0.0"
+    }
+    buildTypes {
+        release {
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+        }
+    }
+    namespace 'com.timestamp.widget'
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+}

@@ -1,0 +1,14 @@
+# Build output
+Publish/
+Proje/build/
+Proje/.gradle/
+Proje/local.properties
+
+# Portable toolchain (JDK + Android SDK + Gradle), never versioned
+API/
+
+# IDE / OS
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
